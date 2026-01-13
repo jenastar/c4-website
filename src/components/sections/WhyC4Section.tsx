@@ -1,12 +1,10 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { CountUp } from "@/components/animations/CountUp";
 import { DecorativeShapes } from "@/components/graphics/DecorativeShapes";
 import { AnimatedChart } from "@/components/graphics/AnimatedChart";
 import { AnimatedBarChart } from "@/components/graphics/AnimatedBarChart";
 import { Target, Lightbulb, Users, Award } from "lucide-react";
-import { useRef } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const principles = [
   {
@@ -39,16 +37,8 @@ const stats = [
 ];
 
 export function WhyC4Section() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isMobile = useIsMobile();
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-32 bg-secondary/30 overflow-hidden">
+    <section className="relative py-16 md:py-32 bg-secondary/30 overflow-hidden">
       <DecorativeShapes variant="minimal" />
       
       <div className="container relative z-10 px-4">
@@ -73,13 +63,6 @@ export function WhyC4Section() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              style={!isMobile ? {
-                y: useTransform(
-                  scrollYProgress,
-                  [0.1, 0.4],
-                  [30 + index * 10, 0]
-                ),
-              } : undefined}
             >
               <motion.div 
                 className="inline-flex p-2.5 md:p-3 rounded-xl bg-card border border-border mb-3 md:mb-4"
@@ -142,13 +125,6 @@ export function WhyC4Section() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
-                style={!isMobile ? {
-                  y: useTransform(
-                    scrollYProgress,
-                    [0.5, 0.8],
-                    [20, 0]
-                  ),
-                } : undefined}
               >
                 <div className="text-2xl md:text-4xl font-bold text-foreground mb-1">
                   <CountUp end={stat.value} suffix={stat.suffix} />
