@@ -64,14 +64,14 @@ export function UseCasesSection() {
           </p>
         </AnimatedSection>
 
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <StaggerContainer className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
           {useCases.map((useCase) => {
             const tagColors = colorClasses[useCase.color];
             return (
               <motion.div
                 key={useCase.title}
                 variants={staggerItemVariants}
-                className="group relative bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all duration-300"
+                className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] group relative bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="p-3 rounded-lg bg-secondary">
