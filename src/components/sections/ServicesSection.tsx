@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
-import { AnimatedSection } from "@/components/animations/AnimatedSection";
-import { StaggerContainer, staggerItemVariants } from "@/components/animations/StaggerContainer";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Bot, Database, Cloud, Shield, Gauge } from "lucide-react";
 
 const services = [
@@ -64,64 +63,119 @@ const colorClasses: Record<string, { bg: string; text: string; gradient: string 
   },
 };
 
-export function ServicesSection() {
-  return (
-    <section id="services" className="py-20 md:py-32 bg-secondary/30">
-      <div className="container px-4">
-        <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-sm font-medium text-primary mb-4 uppercase tracking-wider">
-            Core Capabilities
-          </span>
-          <h2 className="text-3xl md:text-display-sm font-bold text-foreground mb-4">
-            What we do
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Full-stack expertise across AI, data, and cloud infrastructure—all on Google Cloud.
-          </p>
-        </AnimatedSection>
+function ServiceCard({ 
+  service, 
+  index, 
+  scrollYProgress 
+}: { 
+  service: typeof services[0]; 
+  index: number;
+  scrollYProgress: any;
+}) {
+  const colors = colorClasses[service.color];
+  
+  // Each card reveals at different scroll positions
+  const startReveal = 0.1 + index * 0.12;
+  const endReveal = startReveal + 0.15;
+  
+  const opacity = useTransform(
+    scrollYProgress,
+    [startReveal, endReveal, 0.9, 1],
+    [0, 1, 1, 0]
+  );
+  
+  const y = useTransform(
+    scrollYProgress,
+    [startReveal, endReveal],
+    [80, 0]
+  );
+  
+  const scale = useTransform(
+    scrollYProgress,
+    [startReveal, endReveal],
+    [0.9, 1]
+  );
 
-        <StaggerContainer className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
-          {services.map((service) => {
-            const colors = colorClasses[service.color];
-            return (
-              <motion.div
-                key={service.title}
-                variants={staggerItemVariants}
-                whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] group relative bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
-              >
-                {/* Gradient accent */}
-                <div className={`absolute inset-0 bg-gradient-to-b ${colors.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                
-                <div className="relative">
-                  <div className={`inline-flex p-4 rounded-xl ${colors.bg} mb-6`}>
-                    <service.icon className={`w-7 h-7 ${colors.text}`} />
-                  </div>
-                  
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    {service.title}
-                  </h3>
-                  
-                  <p className="text-muted-foreground mb-6">
-                    {service.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {service.features.map((feature) => (
-                      <span
-                        key={feature}
-                        className="text-xs font-medium px-3 py-1 rounded-full bg-secondary text-secondary-foreground"
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </StaggerContainer>
+  return (
+    <motion.div
+      style={{ opacity, y, scale }}
+      whileHover={{ y: -8, transition: { duration: 0.2 } }}
+      className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] group relative bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
+    >
+      {/* Gradient accent */}
+      <div className={`absolute inset-0 bg-gradient-to-b ${colors.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+      
+      <div className="relative">
+        <div className={`inline-flex p-4 rounded-xl ${colors.bg} mb-6`}>
+          <service.icon className={`w-7 h-7 ${colors.text}`} />
+        </div>
+        
+        <h3 className="text-xl font-bold text-foreground mb-3">
+          {service.title}
+        </h3>
+        
+        <p className="text-muted-foreground mb-6">
+          {service.description}
+        </p>
+        
+        <div className="flex flex-wrap gap-2">
+          {service.features.map((feature) => (
+            <span
+              key={feature}
+              className="text-xs font-medium px-3 py-1 rounded-full bg-secondary text-secondary-foreground"
+            >
+              {feature}
+            </span>
+          ))}
+        </div>
       </div>
-    </section>
+    </motion.div>
+  );
+}
+
+export function ServicesSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  
+  // Header animations
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const headerY = useTransform(scrollYProgress, [0, 0.15], [40, 0]);
+
+  return (
+    <div ref={containerRef} className="relative h-[300vh]">
+      <section id="services" className="sticky top-0 h-screen flex items-center overflow-hidden bg-secondary/30">
+        <div className="container px-4 py-20">
+          <motion.div 
+            style={{ opacity: headerOpacity, y: headerY }}
+            className="text-center mb-16"
+          >
+            <span className="inline-block text-sm font-medium text-primary mb-4 uppercase tracking-wider">
+              Core Capabilities
+            </span>
+            <h2 className="text-3xl md:text-display-sm font-bold text-foreground mb-4">
+              What we do
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Full-stack expertise across AI, data, and cloud infrastructure—all on Google Cloud.
+            </p>
+          </motion.div>
+
+          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
+            {services.map((service, index) => (
+              <ServiceCard 
+                key={service.title}
+                service={service}
+                index={index}
+                scrollYProgress={scrollYProgress}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

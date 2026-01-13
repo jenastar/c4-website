@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
-import { AnimatedSection } from "@/components/animations/AnimatedSection";
-import { StaggerContainer, staggerItemVariants } from "@/components/animations/StaggerContainer";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { MessageSquare, Search, Workflow, BarChart3, FileSearch, Mic, ScanEye } from "lucide-react";
 
 const useCases = [
@@ -62,52 +61,135 @@ const colorClasses: Record<string, { bg: string; text: string }> = {
   "google-green": { bg: "bg-google-green", text: "text-white" },
 };
 
-export function UseCasesSection() {
-  return (
-    <section className="py-20 md:py-32 bg-background">
-      <div className="container px-4">
-        <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-sm font-medium text-primary mb-4 uppercase tracking-wider">
-            Use Cases
-          </span>
-          <h2 className="text-3xl md:text-display-sm font-bold text-foreground mb-4">
-            What we build
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Real solutions we've delivered for teams like yours.
-          </p>
-        </AnimatedSection>
+function UseCaseCard({
+  useCase,
+  index,
+  scrollYProgress,
+  total,
+}: {
+  useCase: typeof useCases[0];
+  index: number;
+  scrollYProgress: any;
+  total: number;
+}) {
+  const tagColors = colorClasses[useCase.color];
+  
+  // Fan-out effect: cards start stacked and spread as you scroll
+  const startReveal = 0.1 + (index / total) * 0.4;
+  const endReveal = startReveal + 0.15;
+  
+  const opacity = useTransform(
+    scrollYProgress,
+    [startReveal - 0.05, startReveal, 0.85, 0.95],
+    [0, 1, 1, 0]
+  );
+  
+  // 3D-like spread effect
+  const row = Math.floor(index / 3);
+  const col = index % 3;
+  const centerOffset = col - 1; // -1, 0, 1
+  
+  const x = useTransform(
+    scrollYProgress,
+    [startReveal, endReveal],
+    [centerOffset * -80, 0]
+  );
+  
+  const y = useTransform(
+    scrollYProgress,
+    [startReveal, endReveal],
+    [100 + row * 30, 0]
+  );
+  
+  const rotateY = useTransform(
+    scrollYProgress,
+    [startReveal, endReveal],
+    [centerOffset * 15, 0]
+  );
+  
+  const scale = useTransform(
+    scrollYProgress,
+    [startReveal, endReveal],
+    [0.85, 1]
+  );
 
-        <StaggerContainer className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-          {useCases.map((useCase) => {
-            const tagColors = colorClasses[useCase.color];
-            return (
-              <motion.div
-                key={useCase.title}
-                variants={staggerItemVariants}
-                className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] group relative bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="p-3 rounded-lg bg-secondary">
-                    <useCase.icon className="w-5 h-5 text-foreground" />
-                  </div>
-                  <span className={`text-xs font-semibold px-3 py-1 rounded-full ${tagColors.bg} ${tagColors.text}`}>
-                    {useCase.tag}
-                  </span>
-                </div>
-                
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {useCase.title}
-                </h3>
-                
-                <p className="text-sm text-muted-foreground">
-                  {useCase.description}
-                </p>
-              </motion.div>
-            );
-          })}
-        </StaggerContainer>
+  return (
+    <motion.div
+      style={{ 
+        opacity, 
+        x, 
+        y, 
+        scale,
+        rotateY,
+        transformPerspective: 1000,
+      }}
+      className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] group relative bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all duration-300"
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="p-3 rounded-lg bg-secondary">
+          <useCase.icon className="w-5 h-5 text-foreground" />
+        </div>
+        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${tagColors.bg} ${tagColors.text}`}>
+          {useCase.tag}
+        </span>
       </div>
-    </section>
+      
+      <h3 className="text-lg font-semibold text-foreground mb-2">
+        {useCase.title}
+      </h3>
+      
+      <p className="text-sm text-muted-foreground">
+        {useCase.description}
+      </p>
+    </motion.div>
+  );
+}
+
+export function UseCasesSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  
+  // Header animations with scale-up effect
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.1, 0.8, 0.95], [0, 1, 1, 0]);
+  const headerY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
+  const headerScale = useTransform(scrollYProgress, [0, 0.1], [0.9, 1]);
+
+  return (
+    <div ref={containerRef} className="relative h-[280vh]">
+      <section className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
+        <div className="container px-4 py-20">
+          <motion.div 
+            style={{ opacity: headerOpacity, y: headerY, scale: headerScale }}
+            className="text-center mb-16"
+          >
+            <span className="inline-block text-sm font-medium text-primary mb-4 uppercase tracking-wider">
+              Use Cases
+            </span>
+            <h2 className="text-3xl md:text-display-sm font-bold text-foreground mb-4">
+              What we build
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Real solutions we've delivered for teams like yours.
+            </p>
+          </motion.div>
+
+          <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+            {useCases.map((useCase, index) => (
+              <UseCaseCard
+                key={useCase.title}
+                useCase={useCase}
+                index={index}
+                scrollYProgress={scrollYProgress}
+                total={useCases.length}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
