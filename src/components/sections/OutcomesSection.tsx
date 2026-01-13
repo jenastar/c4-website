@@ -72,14 +72,14 @@ export function OutcomesSection() {
           </p>
         </AnimatedSection>
 
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <StaggerContainer className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
           {outcomes.map((outcome, index) => {
             const colors = colorClasses[outcome.color];
             return (
               <motion.div
                 key={outcome.title}
                 variants={staggerItemVariants}
-                className={`group relative p-6 rounded-xl border ${colors.border} bg-card hover:shadow-lg transition-all duration-300`}
+                className={`group relative p-6 rounded-xl border ${colors.border} bg-card hover:shadow-lg transition-all duration-300 w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]`}
               >
                 <div className={`inline-flex p-3 rounded-lg ${colors.bg} mb-4`}>
                   <outcome.icon className={`w-6 h-6 ${colors.text}`} />
