@@ -199,7 +199,7 @@ export function UseCasesSection() {
     offset: ["start start", "end end"],
   });
   
-  // Calculate based on card width for smoother scrolling
+  // Always call hooks unconditionally
   const x = useTransform(
     scrollYProgress,
     [0, 1],
@@ -209,6 +209,27 @@ export function UseCasesSection() {
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const headerOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0.3]);
   const headerScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.95]);
+  
+  // Pre-compute CTA animations
+  const ctaScale = useTransform(scrollYProgress, [0.9, 1], [0.9, 1]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.85, 1], [0.5, 1]);
+  
+  // Pre-compute scroll hint opacity
+  const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.6, 0.6, 0]);
+  
+  // Pre-compute dot animations
+  const dotAnimations = useCases.map((_, index) => ({
+    scale: useTransform(
+      scrollYProgress,
+      [index / useCases.length, (index + 0.5) / useCases.length, (index + 1) / useCases.length],
+      [1, 1.5, 1]
+    ),
+    opacity: useTransform(
+      scrollYProgress,
+      [index / useCases.length, (index + 0.5) / useCases.length, (index + 1) / useCases.length],
+      [0.3, 1, 0.3]
+    ),
+  }));
 
   // Mobile: vertical stacked layout
   if (isMobile) {
@@ -297,8 +318,8 @@ export function UseCasesSection() {
             
             <motion.div
               style={{
-                scale: useTransform(scrollYProgress, [0.9, 1], [0.9, 1]),
-                opacity: useTransform(scrollYProgress, [0.85, 1], [0.5, 1]),
+                scale: ctaScale,
+                opacity: ctaOpacity,
               }}
               className="flex-shrink-0 w-[500px] lg:w-[600px] h-[400px] flex items-center justify-center"
             >
@@ -322,7 +343,7 @@ export function UseCasesSection() {
 
         <motion.div 
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 text-muted-foreground text-sm"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.6, 0.6, 0]) }}
+          style={{ opacity: scrollHintOpacity }}
         >
           <motion.div
             animate={{ x: [0, 10, 0] }}
@@ -340,16 +361,8 @@ export function UseCasesSection() {
               key={index}
               className="w-2 h-2 rounded-full bg-muted-foreground/30"
               style={{
-                scale: useTransform(
-                  scrollYProgress,
-                  [index / useCases.length, (index + 0.5) / useCases.length, (index + 1) / useCases.length],
-                  [1, 1.5, 1]
-                ),
-                opacity: useTransform(
-                  scrollYProgress,
-                  [index / useCases.length, (index + 0.5) / useCases.length, (index + 1) / useCases.length],
-                  [0.3, 1, 0.3]
-                ),
+                scale: dotAnimations[index].scale,
+                opacity: dotAnimations[index].opacity,
               }}
             />
           ))}
