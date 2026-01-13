@@ -190,7 +190,7 @@ export function UseCasesSection() {
     <div 
       ref={containerRef} 
       className="relative bg-secondary/30"
-      style={{ height: `${useCases.length * 100}vh` }}
+      style={{ height: `${useCases.length * 50}vh` }}
     >
       <section className="sticky top-0 h-screen overflow-hidden">
         {/* Top progress bar */}
