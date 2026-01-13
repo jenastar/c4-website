@@ -3,6 +3,7 @@ import { useRef } from "react";
 
 interface BarData {
   value: number;
+  displayValue: string;
   label: string;
   color: string;
 }
@@ -13,17 +14,17 @@ interface AnimatedBarChartProps {
 }
 
 const defaultData: BarData[] = [
-  { value: 50, label: "Projects", color: "hsl(217 91% 60%)" },
-  { value: 95, label: "On-time", color: "hsl(142 71% 45%)" },
-  { value: 75, label: "Faster", color: "hsl(48 96% 53%)" },
-  { value: 40, label: "Savings", color: "hsl(4 90% 58%)" },
+  { value: 50, displayValue: "50+", label: "Projects", color: "hsl(217 91% 60%)" },
+  { value: 95, displayValue: "95%", label: "On-time", color: "hsl(142 71% 45%)" },
+  { value: 100, displayValue: "3x", label: "Faster", color: "hsl(48 96% 53%)" },
+  { value: 40, displayValue: "40%", label: "Savings", color: "hsl(4 90% 58%)" },
 ];
 
 export function AnimatedBarChart({ data = defaultData, className = "" }: AnimatedBarChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
-  const maxValue = Math.max(...data.map(d => d.value));
+  const maxValue = 100; // Fixed scale for percentage-based comparison
   const barWidth = 40;
   const gap = 30;
   const chartHeight = 120;
@@ -109,8 +110,7 @@ export function AnimatedBarChart({ data = defaultData, className = "" }: Animate
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
               transition={{ delay: 0.6 + i * 0.15, duration: 0.3 }}
             >
-              {bar.value}
-              {bar.label === "On-time" ? "%" : bar.label === "Faster" ? "x" : bar.label === "Savings" ? "%" : "+"}
+              {bar.displayValue}
             </motion.text>
 
             {/* Label */}
