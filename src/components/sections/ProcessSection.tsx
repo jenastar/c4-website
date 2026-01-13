@@ -165,7 +165,7 @@ export function ProcessSection() {
   const activeStep = useTransform(scrollYProgress, [0, 1], [0, steps.length]);
 
   return (
-    <div ref={containerRef} className="relative h-[180vh]">
+    <div ref={containerRef} className="relative h-[300vh]">
       <section className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
         <div className="container px-4 py-20">
           <motion.div 

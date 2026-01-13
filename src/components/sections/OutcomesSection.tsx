@@ -128,7 +128,7 @@ export function OutcomesSection() {
   const headerScale = useTransform(scrollYProgress, [0, 0.12], [0.95, 1]);
 
   return (
-    <div ref={containerRef} className="relative h-[150vh]">
+    <div ref={containerRef} className="relative h-[250vh]">
       <section className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
         <div className="container px-4 py-20">
           <motion.div 

@@ -146,7 +146,7 @@ export function ServicesSection() {
   const headerY = useTransform(scrollYProgress, [0, 0.15], [40, 0]);
 
   return (
-    <div ref={containerRef} className="relative h-[180vh]">
+    <div ref={containerRef} className="relative h-[300vh]">
       <section id="services" className="sticky top-0 h-screen flex items-center overflow-hidden bg-secondary/30">
         <div className="container px-4 py-20">
           <motion.div 
