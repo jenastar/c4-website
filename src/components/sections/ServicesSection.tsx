@@ -80,7 +80,7 @@ export function ServicesSection() {
           </p>
         </AnimatedSection>
 
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <StaggerContainer className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
           {services.map((service) => {
             const colors = colorClasses[service.color];
             return (
@@ -88,7 +88,7 @@ export function ServicesSection() {
                 key={service.title}
                 variants={staggerItemVariants}
                 whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                className="group relative bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
+                className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] group relative bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
               >
                 {/* Gradient accent */}
                 <div className={`absolute inset-0 bg-gradient-to-b ${colors.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
