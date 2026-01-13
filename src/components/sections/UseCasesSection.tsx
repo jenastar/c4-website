@@ -1,7 +1,19 @@
 import { motion } from "framer-motion";
-import { MessageSquare, Search, Workflow, BarChart3, FileSearch, Mic, ScanEye } from "lucide-react";
+import { MessageSquare, Search, Workflow, BarChart3, FileSearch, Mic, ScanEye, LucideIcon } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileHorizontalCarousel } from "@/components/animations/MobileHorizontalCarousel";
+import { DesktopHorizontalScroll } from "@/components/animations/DesktopHorizontalScroll";
 
-const useCases = [
+interface UseCase {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  tag: string;
+  color: string;
+  feature: string;
+}
+
+const useCases: UseCase[] = [
   {
     icon: MessageSquare,
     title: "AI Copilots",
@@ -67,21 +79,18 @@ const colorClasses: Record<string, { bg: string; border: string }> = {
   "google-green": { bg: "bg-google-green", border: "border-google-green/30" },
 };
 
-function UseCaseCard({ useCase, index }: { useCase: typeof useCases[0]; index: number }) {
+function UseCaseCard({ useCase }: { useCase: UseCase }) {
   const colors = colorClasses[useCase.color];
+  const Icon = useCase.icon;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-30px" }}
-      transition={{ delay: index * 0.08, duration: 0.5 }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className={`relative bg-card rounded-xl border ${colors.border} p-5 md:p-6`}
+      className={`relative bg-card rounded-xl border ${colors.border} p-5 md:p-6 h-full`}
     >
       <div className="flex items-start gap-4">
         <div className={`flex-shrink-0 p-3 rounded-lg ${colors.bg}`}>
-          <useCase.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          <Icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
@@ -106,14 +115,20 @@ function UseCaseCard({ useCase, index }: { useCase: typeof useCases[0]; index: n
 }
 
 export function UseCasesSection() {
+  const isMobile = useIsMobile();
+
+  const renderUseCase = (useCase: UseCase, index: number) => (
+    <UseCaseCard useCase={useCase} />
+  );
+
   return (
-    <section className="py-16 md:py-24 bg-secondary/30">
-      <div className="container px-4">
-        <motion.div 
+    <section id="use-cases" className="bg-secondary/30">
+      <div className="py-16 md:py-24 container px-4">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10 md:mb-16"
+          className="text-center mb-10 md:mb-8"
         >
           <span className="inline-block text-sm font-medium text-primary mb-2 md:mb-3 uppercase tracking-wider">
             Use Cases
@@ -125,20 +140,38 @@ export function UseCasesSection() {
             From AI copilots to data pipelines, we deliver solutions that drive real business value.
           </p>
         </motion.div>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
-          {useCases.map((useCase, index) => (
-            <UseCaseCard key={useCase.title} useCase={useCase} index={index} />
-          ))}
+      {/* Mobile: Swipeable carousel */}
+      {isMobile && (
+        <div className="pb-16">
+          <MobileHorizontalCarousel
+            items={useCases}
+            renderItem={renderUseCase}
+            progressColors="from-google-blue via-google-green to-google-yellow"
+          />
         </div>
+      )}
 
+      {/* Desktop: Horizontal scroll-linked section */}
+      {!isMobile && (
+        <DesktopHorizontalScroll
+          items={useCases}
+          renderItem={renderUseCase}
+          itemWidth={420}
+          sectionHeight="250vh"
+          progressColors="from-google-blue via-google-green to-google-yellow"
+        />
+      )}
+
+      <div className="container px-4 pb-16 md:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-10 md:mt-16"
+          className="text-center mt-8 md:mt-16"
         >
-          <a 
+          <a
             href="#contact"
             className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
           >
