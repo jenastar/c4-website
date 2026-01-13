@@ -172,10 +172,11 @@ export function UseCasesSection() {
   });
   
   // Horizontal scroll translation - move left as we scroll down
+  // Calculate based on viewport units for smoother scrolling
   const x = useTransform(
     scrollYProgress,
     [0, 1],
-    ["5%", `-${(useCases.length - 1) * 85}%`]
+    ["0px", `-${(useCases.length - 0.5) * 600}px`]
   );
   
   // Progress indicator
