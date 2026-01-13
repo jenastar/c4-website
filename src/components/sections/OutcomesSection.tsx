@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Zap, Shield, TrendingUp, Clock, Users } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const outcomes = [
   {
@@ -58,7 +59,33 @@ const colorClasses: Record<string, { bg: string; text: string; border: string }>
   },
 };
 
-function OutcomeCard({
+// Mobile card with simple animations
+function MobileOutcomeCard({ outcome, index }: { outcome: typeof outcomes[0]; index: number }) {
+  const colors = colorClasses[outcome.color];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      className={`group relative p-5 rounded-xl border ${colors.border} bg-card`}
+    >
+      <div className={`inline-flex p-2.5 rounded-lg ${colors.bg} mb-3`}>
+        <outcome.icon className={`w-5 h-5 ${colors.text}`} />
+      </div>
+      <h3 className="text-base font-semibold text-foreground mb-1.5">
+        {outcome.title}
+      </h3>
+      <p className="text-sm text-muted-foreground">
+        {outcome.description}
+      </p>
+    </motion.div>
+  );
+}
+
+// Desktop card with scroll animations
+function DesktopOutcomeCard({
   outcome,
   index,
   scrollYProgress,
@@ -69,7 +96,6 @@ function OutcomeCard({
 }) {
   const colors = colorClasses[outcome.color];
   
-  // Staggered reveal timing for each card
   const startReveal = 0.15 + index * 0.1;
   const endReveal = startReveal + 0.12;
   
@@ -79,13 +105,12 @@ function OutcomeCard({
     [0, 1, 1, 0]
   );
   
-  // Cards come from different directions based on position
   const directions = [
-    { x: -60, y: 40 },   // left
-    { x: 0, y: 60 },     // bottom
-    { x: 60, y: 40 },    // right
-    { x: -40, y: 50 },   // left-bottom
-    { x: 40, y: 50 },    // right-bottom
+    { x: -60, y: 40 },
+    { x: 0, y: 60 },
+    { x: 60, y: 40 },
+    { x: -40, y: 50 },
+    { x: 40, y: 50 },
   ];
   const dir = directions[index % directions.length];
   
@@ -108,7 +133,6 @@ function OutcomeCard({
         {outcome.description}
       </p>
       
-      {/* Hover accent */}
       <div className={`absolute inset-x-0 bottom-0 h-1 ${colors.bg} rounded-b-xl opacity-0 group-hover:opacity-100 transition-opacity`} />
     </motion.div>
   );
@@ -116,17 +140,51 @@ function OutcomeCard({
 
 export function OutcomesSection() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
   
-  // Header animations
   const headerOpacity = useTransform(scrollYProgress, [0, 0.12, 0.8, 1], [0, 1, 1, 0]);
   const headerY = useTransform(scrollYProgress, [0, 0.12], [30, 0]);
   const headerScale = useTransform(scrollYProgress, [0, 0.12], [0.95, 1]);
 
+  // Mobile: simple stacked layout
+  if (isMobile) {
+    return (
+      <section className="py-16 bg-background">
+        <div className="container px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <h2 className="text-2xl font-bold text-foreground mb-3">
+              What changes after C4
+            </h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              We transform how mid-market teams build and operate AI systems on Google Cloud.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            {outcomes.map((outcome, index) => (
+              <MobileOutcomeCard
+                key={outcome.title}
+                outcome={outcome}
+                index={index}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Desktop: sticky scroll with animations
   return (
     <div ref={containerRef} className="relative h-[250vh]">
       <section className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
@@ -145,7 +203,7 @@ export function OutcomesSection() {
 
           <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
             {outcomes.map((outcome, index) => (
-              <OutcomeCard
+              <DesktopOutcomeCard
                 key={outcome.title}
                 outcome={outcome}
                 index={index}

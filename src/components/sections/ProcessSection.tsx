@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Search, PenTool, Rocket, Settings } from "lucide-react";
 import { useRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const steps = [
   {
@@ -40,7 +41,8 @@ const colorClasses: Record<string, { bg: string; text: string; border: string; g
   "google-green": { bg: "bg-google-green", text: "text-white", border: "border-google-green", glow: "shadow-google-green/40" },
 };
 
-function StepCard({
+// Desktop version with scroll-linked animations
+function DesktopStepCard({
   step,
   index,
   scrollYProgress,
@@ -53,13 +55,11 @@ function StepCard({
 }) {
   const colors = colorClasses[step.color];
   
-  // Each step gets a portion of the scroll
   const stepProgress = 1 / total;
   const stepStart = index * stepProgress;
   const stepMid = stepStart + stepProgress * 0.5;
   const stepEnd = (index + 1) * stepProgress;
   
-  // Active state: card is highlighted when in its scroll range
   const isActiveOpacity = useTransform(
     scrollYProgress,
     [stepStart, stepStart + 0.05, stepEnd - 0.05, stepEnd],
@@ -78,14 +78,12 @@ function StepCard({
     [20, 0, 20]
   );
   
-  // Icon glow effect
   const glowOpacity = useTransform(
     scrollYProgress,
     [stepStart, stepMid, stepEnd],
     [0, 1, 0]
   );
   
-  // Details reveal
   const detailsOpacity = useTransform(
     scrollYProgress,
     [stepStart + 0.02, stepMid, stepEnd - 0.02],
@@ -103,7 +101,6 @@ function StepCard({
       style={{ opacity: isActiveOpacity, scale, y }}
       className="relative flex flex-col items-center text-center p-6"
     >
-      {/* Glowing icon container */}
       <motion.div
         style={{ 
           boxShadow: useTransform(glowOpacity, (v) => `0 0 ${v * 40}px ${v * 15}px`),
@@ -112,7 +109,6 @@ function StepCard({
       >
         <step.icon className="w-9 h-9" />
         
-        {/* Pulsing ring when active */}
         <motion.span 
           className={`absolute inset-0 rounded-full border-2 ${colors.border}`}
           style={{
@@ -121,7 +117,6 @@ function StepCard({
           }}
         />
         
-        {/* Step number */}
         <span className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-card border-2 border-border text-sm font-bold text-foreground flex items-center justify-center">
           {index + 1}
         </span>
@@ -135,7 +130,6 @@ function StepCard({
         {step.description}
       </p>
       
-      {/* Revealed details on active */}
       <motion.p 
         style={{ opacity: detailsOpacity, y: detailsY }}
         className="text-sm text-muted-foreground/80 italic max-w-xs"
@@ -146,24 +140,95 @@ function StepCard({
   );
 }
 
+// Mobile version with simple animations
+function MobileStepCard({
+  step,
+  index,
+}: {
+  step: typeof steps[0];
+  index: number;
+}) {
+  const colors = colorClasses[step.color];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      className="relative flex flex-col items-center text-center p-4 sm:p-6"
+    >
+      <div
+        className={`relative inline-flex items-center justify-center w-16 h-16 rounded-full ${colors.bg} ${colors.text} mb-4`}
+      >
+        <step.icon className="w-7 h-7" />
+        
+        <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-card border-2 border-border text-xs font-bold text-foreground flex items-center justify-center">
+          {index + 1}
+        </span>
+      </div>
+
+      <h3 className="text-lg font-bold text-foreground mb-2">
+        {step.title}
+      </h3>
+      
+      <p className="text-sm text-muted-foreground">
+        {step.description}
+      </p>
+    </motion.div>
+  );
+}
+
 export function ProcessSection() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // Header animations
   const headerOpacity = useTransform(scrollYProgress, [0, 0.08, 0.9, 1], [0, 1, 1, 0]);
   const headerY = useTransform(scrollYProgress, [0, 0.08], [30, 0]);
-  
-  // Progress line that fills as you scroll through steps
   const lineWidth = useTransform(scrollYProgress, [0.05, 0.95], ["0%", "100%"]);
-  
-  // Current active step indicator
-  const activeStep = useTransform(scrollYProgress, [0, 1], [0, steps.length]);
 
+  // Mobile: simple stacked layout
+  if (isMobile) {
+    return (
+      <section className="py-16 bg-background">
+        <div className="container px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <span className="inline-block text-sm font-medium text-primary mb-3 uppercase tracking-wider">
+              Our Process
+            </span>
+            <h2 className="text-2xl font-bold text-foreground mb-3">
+              How we work
+            </h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              A proven methodology that delivers results predictably.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {steps.map((step, index) => (
+              <MobileStepCard
+                key={step.title}
+                step={step}
+                index={index}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Desktop: sticky scroll with animations
   return (
     <div ref={containerRef} className="relative h-[300vh]">
       <section className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
@@ -183,7 +248,6 @@ export function ProcessSection() {
             </p>
           </motion.div>
 
-          {/* Progress indicator */}
           <div className="max-w-4xl mx-auto mb-8">
             <div className="relative h-1 bg-border rounded-full overflow-hidden">
               <motion.div 
@@ -192,7 +256,6 @@ export function ProcessSection() {
               />
             </div>
             
-            {/* Step dots on progress bar */}
             <div className="relative flex justify-between mt-2">
               {steps.map((step, index) => {
                 const stepPosition = index / (steps.length - 1);
@@ -214,10 +277,9 @@ export function ProcessSection() {
             </div>
           </div>
 
-          {/* Steps grid */}
           <div className="grid md:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {steps.map((step, index) => (
-              <StepCard
+              <DesktopStepCard
                 key={step.title}
                 step={step}
                 index={index}
