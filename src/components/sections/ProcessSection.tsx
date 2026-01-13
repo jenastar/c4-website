@@ -188,9 +188,20 @@ export function ProcessSection() {
     offset: ["start start", "end end"],
   });
 
+  // Always call hooks unconditionally
   const headerOpacity = useTransform(scrollYProgress, [0, 0.08, 0.9, 1], [0, 1, 1, 0]);
   const headerY = useTransform(scrollYProgress, [0, 0.08], [30, 0]);
   const lineWidth = useTransform(scrollYProgress, [0.05, 0.95], ["0%", "100%"]);
+  
+  // Pre-compute dot scales for all steps (must be called unconditionally)
+  const dotScales = steps.map((_, index) => {
+    const stepPosition = index / (steps.length - 1);
+    return useTransform(
+      scrollYProgress,
+      [stepPosition - 0.1, stepPosition, stepPosition + 0.1],
+      [1, 1.5, 1]
+    );
+  });
 
   // Mobile: simple stacked layout
   if (isMobile) {
@@ -258,18 +269,12 @@ export function ProcessSection() {
             
             <div className="relative flex justify-between mt-2">
               {steps.map((step, index) => {
-                const stepPosition = index / (steps.length - 1);
-                const dotScale = useTransform(
-                  scrollYProgress,
-                  [stepPosition - 0.1, stepPosition, stepPosition + 0.1],
-                  [1, 1.5, 1]
-                );
                 const colors = colorClasses[step.color];
                 
                 return (
                   <motion.div
                     key={step.title}
-                    style={{ scale: dotScale }}
+                    style={{ scale: dotScales[index] }}
                     className={`w-3 h-3 rounded-full ${colors.bg}`}
                   />
                 );
