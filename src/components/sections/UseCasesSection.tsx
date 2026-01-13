@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { StaggerContainer, staggerItemVariants } from "@/components/animations/StaggerContainer";
-import { MessageSquare, Search, Workflow, BarChart3, FileSearch } from "lucide-react";
+import { MessageSquare, Search, Workflow, BarChart3, FileSearch, Mic, ScanEye } from "lucide-react";
 
 const useCases = [
   {
@@ -38,6 +38,20 @@ const useCases = [
     description: "Real-time insights with BigQuery, Looker, and custom visualization.",
     tag: "Data",
     color: "google-blue",
+  },
+  {
+    icon: Mic,
+    title: "Voice Agents",
+    description: "Conversational AI voice assistants for customer support, sales, and internal operations.",
+    tag: "AI",
+    color: "google-green",
+  },
+  {
+    icon: ScanEye,
+    title: "Video & Image Analysis",
+    description: "Computer vision solutions for content moderation, quality inspection, and visual data extraction.",
+    tag: "AI",
+    color: "google-red",
   },
 ];
 
