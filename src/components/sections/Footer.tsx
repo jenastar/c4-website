@@ -129,9 +129,6 @@ export function Footer() {
           </div>
         </motion.div>
       </div>
-
-      {/* Decorative pattern */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-google-blue via-google-red via-google-yellow to-google-green opacity-50" />
     </footer>
   );
 }
