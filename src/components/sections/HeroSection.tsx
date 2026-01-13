@@ -1,16 +1,39 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { GeometricBackground } from "@/components/graphics/GeometricBackground";
 import { ArrowRight, Calendar } from "lucide-react";
+import { useRef } from "react";
 
 export function HeroSection() {
   const calendlyUrl = "https://calendly.com"; // Replace with actual Calendly link
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  // Scroll-linked animations
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Parallax and fade effects
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0]);
+  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-secondary/30">
-      <GeometricBackground />
+    <section 
+      ref={sectionRef}
+      className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-secondary/30"
+    >
+      {/* Parallax background */}
+      <motion.div style={{ y: backgroundY }} className="absolute inset-0">
+        <GeometricBackground />
+      </motion.div>
       
-      <div className="container relative z-10 px-4 py-20 md:py-32">
+      <motion.div 
+        style={{ y: contentY, opacity: contentOpacity, scale: contentScale }}
+        className="container relative z-10 px-4 py-20 md:py-32"
+      >
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <motion.div
@@ -92,7 +115,7 @@ export function HeroSection() {
             </div>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll indicator */}
       <motion.div
@@ -100,6 +123,7 @@ export function HeroSection() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.5 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        style={{ opacity: useTransform(scrollYProgress, [0, 0.3], [1, 0]) }}
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}

@@ -1,6 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Search, PenTool, Rocket, Settings } from "lucide-react";
+import { useRef } from "react";
 
 const steps = [
   {
@@ -37,8 +38,19 @@ const colorClasses: Record<string, { bg: string; text: string; line: string }> =
 };
 
 export function ProcessSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Progress line animation based on scroll
+  const lineProgress = useTransform(scrollYProgress, [0.2, 0.8], [0, 100]);
+
   return (
-    <section className="py-20 md:py-32 bg-background overflow-hidden">
+    <section ref={sectionRef} className="py-20 md:py-32 bg-background overflow-hidden">
       <div className="container px-4">
         <AnimatedSection className="text-center mb-16">
           <span className="inline-block text-sm font-medium text-primary mb-4 uppercase tracking-wider">
@@ -53,17 +65,34 @@ export function ProcessSection() {
         </AnimatedSection>
 
         <div className="relative max-w-4xl mx-auto">
-          {/* Connection line */}
+          {/* Connection line background */}
           <div className="hidden md:block absolute top-16 left-[10%] right-[10%] h-0.5 bg-border" />
+          
+          {/* Animated progress line */}
+          <motion.div 
+            ref={progressRef}
+            className="hidden md:block absolute top-16 left-[10%] h-0.5 bg-gradient-to-r from-google-blue via-google-red via-google-yellow to-google-green"
+            style={{ 
+              width: useTransform(lineProgress, (value) => `${Math.min(value, 80)}%`),
+            }}
+          />
 
           <div className="grid md:grid-cols-4 gap-8">
             {steps.map((step, index) => {
               const colors = colorClasses[step.color];
+              
+              // Calculate when this step should activate
+              const stepStart = 0.2 + (index * 0.15);
+              const stepEnd = stepStart + 0.15;
+              
               return (
-                <AnimatedSection
+                <motion.div
                   key={step.title}
-                  delay={index * 0.1}
                   className="relative text-center"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                   {/* Step number with icon */}
                   <motion.div
@@ -71,6 +100,23 @@ export function ProcessSection() {
                     className={`relative inline-flex items-center justify-center w-16 h-16 rounded-full ${colors.bg} ${colors.text} mb-6 shadow-lg z-10`}
                   >
                     <step.icon className="w-7 h-7" />
+                    
+                    {/* Animated ring on scroll */}
+                    <motion.span 
+                      className={`absolute inset-0 rounded-full ${colors.bg} opacity-30`}
+                      style={{
+                        scale: useTransform(
+                          scrollYProgress, 
+                          [stepStart, stepEnd], 
+                          [1, 1.3]
+                        ),
+                        opacity: useTransform(
+                          scrollYProgress,
+                          [stepStart, stepEnd, stepEnd + 0.1],
+                          [0, 0.4, 0]
+                        ),
+                      }}
+                    />
                     
                     {/* Step number badge */}
                     <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-card border-2 border-border text-xs font-bold text-foreground flex items-center justify-center">
@@ -85,7 +131,7 @@ export function ProcessSection() {
                   <p className="text-sm text-muted-foreground">
                     {step.description}
                   </p>
-                </AnimatedSection>
+                </motion.div>
               );
             })}
           </div>
