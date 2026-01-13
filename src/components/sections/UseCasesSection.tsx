@@ -9,6 +9,7 @@ const useCases = [
     description: "Custom assistants that understand your business context and integrate with your tools.",
     tag: "AI",
     color: "google-blue",
+    feature: "Natural language understanding",
   },
   {
     icon: Search,
@@ -16,6 +17,7 @@ const useCases = [
     description: "Retrieval-augmented generation for accurate, grounded responses from your documents.",
     tag: "AI",
     color: "google-green",
+    feature: "Document-grounded AI",
   },
   {
     icon: Workflow,
@@ -23,6 +25,7 @@ const useCases = [
     description: "End-to-end process automation with intelligent decision-making and human-in-the-loop.",
     tag: "Automation",
     color: "google-yellow",
+    feature: "Smart process flows",
   },
   {
     icon: FileSearch,
@@ -30,6 +33,7 @@ const useCases = [
     description: "Extract, classify, and route documents at scale with vision AI and NLP.",
     tag: "AI",
     color: "google-red",
+    feature: "Intelligent extraction",
   },
   {
     icon: BarChart3,
@@ -37,6 +41,7 @@ const useCases = [
     description: "Real-time insights with BigQuery, Looker, and custom visualization.",
     tag: "Data",
     color: "google-blue",
+    feature: "Real-time insights",
   },
   {
     icon: Mic,
@@ -44,6 +49,7 @@ const useCases = [
     description: "Conversational AI voice assistants for customer support, sales, and internal operations.",
     tag: "AI",
     color: "google-green",
+    feature: "Speech-to-action",
   },
   {
     icon: ScanEye,
@@ -51,17 +57,18 @@ const useCases = [
     description: "Computer vision solutions for content moderation, quality inspection, and visual data extraction.",
     tag: "AI",
     color: "google-red",
+    feature: "Visual intelligence",
   },
 ];
 
-const colorClasses: Record<string, { bg: string; text: string }> = {
-  "google-blue": { bg: "bg-google-blue", text: "text-white" },
-  "google-red": { bg: "bg-google-red", text: "text-white" },
-  "google-yellow": { bg: "bg-google-yellow", text: "text-foreground" },
-  "google-green": { bg: "bg-google-green", text: "text-white" },
+const colorClasses: Record<string, { bg: string; border: string; glow: string }> = {
+  "google-blue": { bg: "bg-google-blue", border: "border-google-blue/30", glow: "shadow-google-blue/20" },
+  "google-red": { bg: "bg-google-red", border: "border-google-red/30", glow: "shadow-google-red/20" },
+  "google-yellow": { bg: "bg-google-yellow", border: "border-google-yellow/30", glow: "shadow-google-yellow/20" },
+  "google-green": { bg: "bg-google-green", border: "border-google-green/30", glow: "shadow-google-green/20" },
 };
 
-function UseCaseCard({
+function HorizontalCard({
   useCase,
   index,
   scrollYProgress,
@@ -72,75 +79,86 @@ function UseCaseCard({
   scrollYProgress: any;
   total: number;
 }) {
-  const tagColors = colorClasses[useCase.color];
+  const colors = colorClasses[useCase.color];
   
-  // Fan-out effect: cards start stacked and spread as you scroll
-  const startReveal = 0.1 + (index / total) * 0.4;
-  const endReveal = startReveal + 0.15;
+  // Each card becomes active during its portion of the scroll
+  const cardStart = index / total;
+  const cardCenter = (index + 0.5) / total;
+  const cardEnd = (index + 1) / total;
   
-  const opacity = useTransform(
-    scrollYProgress,
-    [startReveal - 0.05, startReveal, 0.85, 0.95],
-    [0, 1, 1, 0]
-  );
-  
-  // 3D-like spread effect
-  const row = Math.floor(index / 3);
-  const col = index % 3;
-  const centerOffset = col - 1; // -1, 0, 1
-  
-  const x = useTransform(
-    scrollYProgress,
-    [startReveal, endReveal],
-    [centerOffset * -80, 0]
-  );
-  
-  const y = useTransform(
-    scrollYProgress,
-    [startReveal, endReveal],
-    [100 + row * 30, 0]
-  );
-  
-  const rotateY = useTransform(
-    scrollYProgress,
-    [startReveal, endReveal],
-    [centerOffset * 15, 0]
-  );
-  
+  // Scale up when centered
   const scale = useTransform(
     scrollYProgress,
-    [startReveal, endReveal],
-    [0.85, 1]
+    [cardStart, cardCenter, cardEnd],
+    [0.85, 1, 0.85]
+  );
+  
+  // Glow effect when active
+  const glowOpacity = useTransform(
+    scrollYProgress,
+    [cardStart, cardCenter, cardEnd],
+    [0, 1, 0]
+  );
+  
+  // Y offset for floating effect
+  const y = useTransform(
+    scrollYProgress,
+    [cardStart, cardCenter, cardEnd],
+    [20, 0, 20]
   );
 
   return (
     <motion.div
-      style={{ 
-        opacity, 
-        x, 
-        y, 
-        scale,
-        rotateY,
-        transformPerspective: 1000,
-      }}
-      className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] group relative bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all duration-300"
+      style={{ scale, y }}
+      className="flex-shrink-0 w-[85vw] md:w-[500px] lg:w-[600px] h-[400px] relative"
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="p-3 rounded-lg bg-secondary">
-          <useCase.icon className="w-5 h-5 text-foreground" />
+      {/* Glow backdrop */}
+      <motion.div
+        style={{ opacity: glowOpacity }}
+        className={`absolute inset-0 rounded-2xl blur-2xl ${colors.bg} opacity-20`}
+      />
+      
+      {/* Card content */}
+      <div className={`relative h-full bg-card rounded-2xl border ${colors.border} p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl ${colors.glow}`}>
+        {/* Top section */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <motion.div 
+              style={{ scale: useTransform(scrollYProgress, [cardStart, cardCenter, cardEnd], [0.9, 1.1, 0.9]) }}
+              className={`p-4 rounded-xl ${colors.bg}`}
+            >
+              <useCase.icon className="w-8 h-8 text-white" />
+            </motion.div>
+            <span className={`text-sm font-bold px-4 py-2 rounded-full ${colors.bg} text-white`}>
+              {useCase.tag}
+            </span>
+          </div>
+          
+          <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+            {useCase.title}
+          </h3>
+          
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            {useCase.description}
+          </p>
         </div>
-        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${tagColors.bg} ${tagColors.text}`}>
-          {useCase.tag}
-        </span>
+        
+        {/* Bottom feature highlight */}
+        <motion.div
+          style={{ opacity: glowOpacity }}
+          className="flex items-center gap-3 pt-6 border-t border-border/50"
+        >
+          <div className={`w-2 h-2 rounded-full ${colors.bg}`} />
+          <span className="text-sm font-medium text-muted-foreground">
+            {useCase.feature}
+          </span>
+        </motion.div>
+        
+        {/* Card number indicator */}
+        <div className="absolute bottom-4 right-4 text-6xl font-bold text-muted/10">
+          {String(index + 1).padStart(2, '0')}
+        </div>
       </div>
-      
-      <h3 className="text-lg font-semibold text-foreground mb-2">
-        {useCase.title}
-      </h3>
-      
-      <p className="text-sm text-muted-foreground">
-        {useCase.description}
-      </p>
     </motion.div>
   );
 }
@@ -153,33 +171,56 @@ export function UseCasesSection() {
     offset: ["start start", "end end"],
   });
   
-  // Header animations with scale-up effect
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.1, 0.8, 0.95], [0, 1, 1, 0]);
-  const headerY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
-  const headerScale = useTransform(scrollYProgress, [0, 0.1], [0.9, 1]);
+  // Horizontal scroll translation - move left as we scroll down
+  const x = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["5%", `-${(useCases.length - 1) * 85}%`]
+  );
+  
+  // Progress indicator
+  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  
+  // Header animations
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0.3]);
+  const headerScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.95]);
 
   return (
-    <div ref={containerRef} className="relative h-[280vh]">
-      <section className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
-        <div className="container px-4 py-20">
+    <div 
+      ref={containerRef} 
+      className="relative bg-secondary/30"
+      style={{ height: `${useCases.length * 100}vh` }}
+    >
+      <section className="sticky top-0 h-screen overflow-hidden">
+        {/* Top progress bar */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-border/30 z-20">
           <motion.div 
-            style={{ opacity: headerOpacity, y: headerY, scale: headerScale }}
-            className="text-center mb-16"
-          >
-            <span className="inline-block text-sm font-medium text-primary mb-4 uppercase tracking-wider">
-              Use Cases
-            </span>
-            <h2 className="text-3xl md:text-display-sm font-bold text-foreground mb-4">
-              What we build
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Real solutions we've delivered for teams like yours.
-            </p>
-          </motion.div>
+            className="h-full bg-gradient-to-r from-google-blue via-google-green to-google-yellow"
+            style={{ width: progressWidth }}
+          />
+        </div>
 
-          <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+        {/* Section header - fades as you scroll */}
+        <motion.div 
+          style={{ opacity: headerOpacity, scale: headerScale }}
+          className="absolute top-8 left-0 right-0 z-10 text-center px-4 pt-8"
+        >
+          <span className="inline-block text-sm font-medium text-primary mb-2 uppercase tracking-wider">
+            Use Cases
+          </span>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            What we build
+          </h2>
+        </motion.div>
+
+        {/* Horizontal scrolling cards */}
+        <div className="h-full flex items-center">
+          <motion.div
+            style={{ x }}
+            className="flex gap-8 pl-[10vw]"
+          >
             {useCases.map((useCase, index) => (
-              <UseCaseCard
+              <HorizontalCard
                 key={useCase.title}
                 useCase={useCase}
                 index={index}
@@ -187,7 +228,68 @@ export function UseCasesSection() {
                 total={useCases.length}
               />
             ))}
-          </div>
+            
+            {/* End card - CTA */}
+            <motion.div
+              style={{
+                scale: useTransform(scrollYProgress, [0.9, 1], [0.9, 1]),
+                opacity: useTransform(scrollYProgress, [0.85, 1], [0.5, 1]),
+              }}
+              className="flex-shrink-0 w-[85vw] md:w-[500px] lg:w-[600px] h-[400px] flex items-center justify-center"
+            >
+              <div className="text-center p-8">
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                  Ready to build?
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  Let's discuss your use case
+                </p>
+                <a 
+                  href="#contact"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
+                >
+                  Get started →
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Bottom scroll indicator */}
+        <motion.div 
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 text-muted-foreground text-sm"
+          style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.6, 0.6, 0]) }}
+        >
+          <motion.div
+            animate={{ x: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-lg"
+          >
+            →
+          </motion.div>
+          <span>Scroll to explore</span>
+        </motion.div>
+
+        {/* Dot indicators */}
+        <div className="absolute bottom-8 right-8 flex gap-2">
+          {useCases.map((_, index) => (
+            <motion.div
+              key={index}
+              className="w-2 h-2 rounded-full bg-muted-foreground/30"
+              style={{
+                scale: useTransform(
+                  scrollYProgress,
+                  [index / useCases.length, (index + 0.5) / useCases.length, (index + 1) / useCases.length],
+                  [1, 1.5, 1]
+                ),
+                opacity: useTransform(
+                  scrollYProgress,
+                  [index / useCases.length, (index + 0.5) / useCases.length, (index + 1) / useCases.length],
+                  [0.3, 1, 0.3]
+                ),
+              }}
+            />
+          ))}
         </div>
       </section>
     </div>
