@@ -27,6 +27,9 @@ export function HorizontalScrollSection({
   
   // Progress bar
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  
+  // Scroll hint opacity - must be called at top level, not in JSX
+  const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.5, 0.5, 0]);
 
   return (
     <div 
@@ -56,7 +59,7 @@ export function HorizontalScrollSection({
         {/* Scroll hint */}
         <motion.div 
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-muted-foreground text-sm"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.5, 0.5, 0]) }}
+          style={{ opacity: scrollHintOpacity }}
         >
           <motion.div
             animate={{ x: [0, 10, 0] }}
