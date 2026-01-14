@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convert OG Image to PNG</title>
+</head>
+<body>
+    <h1>OG Image Converter</h1>
+    <p>Instructions: Open this file in a browser, right-click the image below, and "Save image as..." to save as PNG.</p>
+
+    <img src="og-image.svg" width="1200" height="630" alt="OG Image Preview" style="border: 2px solid #ccc; display: block; margin: 20px 0;" />
+
+    <canvas id="canvas" width="1200" height="630" style="display: none;"></canvas>
+
+    <button onclick="convertToPNG()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+        Download as PNG
+    </button>
+
+    <script>
+        function convertToPNG() {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'og-image.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+            };
+            img.src = 'og-image.svg';
+        }
+    </script>
+</body>
+</html>
