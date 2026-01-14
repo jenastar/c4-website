@@ -19,7 +19,6 @@ export function HeroSection() {
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0]);
   const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
-  const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
 
   return (
     <section 
@@ -124,7 +123,7 @@ export function HeroSection() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.5 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        style={{ opacity: scrollIndicatorOpacity }}
+        style={{ opacity: useTransform(scrollYProgress, [0, 0.3], [1, 0]) }}
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}

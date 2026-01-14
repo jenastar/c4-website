@@ -1,17 +1,9 @@
-import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Search, PenTool, Rocket, Settings, LucideIcon } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileHorizontalCarousel } from "@/components/animations/MobileHorizontalCarousel";
+import { AnimatedSection } from "@/components/animations/AnimatedSection";
+import { Search, PenTool, Rocket, Settings } from "lucide-react";
+import { useRef } from "react";
 
-interface Step {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  color: string;
-}
-
-const steps: Step[] = [
+const steps = [
   {
     icon: Search,
     title: "Discover",
@@ -38,130 +30,112 @@ const steps: Step[] = [
   },
 ];
 
-const colorClasses: Record<string, { bg: string; text: string }> = {
-  "google-blue": { bg: "bg-google-blue", text: "text-white" },
-  "google-red": { bg: "bg-google-red", text: "text-white" },
-  "google-yellow": { bg: "bg-google-yellow", text: "text-foreground" },
-  "google-green": { bg: "bg-google-green", text: "text-white" },
+const colorClasses: Record<string, { bg: string; text: string; line: string }> = {
+  "google-blue": { bg: "bg-google-blue", text: "text-white", line: "bg-google-blue" },
+  "google-red": { bg: "bg-google-red", text: "text-white", line: "bg-google-red" },
+  "google-yellow": { bg: "bg-google-yellow", text: "text-foreground", line: "bg-google-yellow" },
+  "google-green": { bg: "bg-google-green", text: "text-white", line: "bg-google-green" },
 };
 
-function StepCard({ step, index }: { step: Step; index: number }) {
-  const colors = colorClasses[step.color];
-  const Icon = step.icon;
-
-  return (
-    <div className="relative flex flex-col items-center text-center p-6 bg-card rounded-xl border border-border h-full">
-      <div
-        className={`relative inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full ${colors.bg} ${colors.text} mb-4 md:mb-6`}
-      >
-        <Icon className="w-7 h-7 md:w-9 md:h-9" />
-        <span className="absolute -top-1 -right-1 w-6 h-6 md:w-7 md:h-7 rounded-full bg-card border-2 border-border text-xs md:text-sm font-bold text-foreground flex items-center justify-center">
-          {index + 1}
-        </span>
-      </div>
-      <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
-        {step.title}
-      </h3>
-      <p className="text-sm md:text-base text-muted-foreground">
-        {step.description}
-      </p>
-    </div>
-  );
-}
-
-function DesktopProcessSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+export function ProcessSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start center", "end center"],
+    offset: ["start end", "end start"],
   });
 
-  const lineWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  // Progress line animation based on scroll
+  const lineProgress = useTransform(scrollYProgress, [0.2, 0.8], [0, 100]);
 
   return (
-    <div ref={sectionRef} className="max-w-5xl mx-auto">
-      {/* Progress line */}
-      <div className="max-w-4xl mx-auto mb-8">
-        <div className="relative h-1 bg-border rounded-full overflow-hidden">
-          <motion.div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-google-blue via-google-red via-google-yellow to-google-green rounded-full"
-            style={{ width: lineWidth }}
-          />
-        </div>
-
-        <div className="relative flex justify-between mt-2">
-          {steps.map((step, index) => {
-            const colors = colorClasses[step.color];
-            return (
-              <motion.div
-                key={step.title}
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 + index * 0.15, type: "spring" }}
-                className={`w-3 h-3 rounded-full ${colors.bg}`}
-              />
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-4 gap-4">
-        {steps.map((step, index) => (
-          <motion.div
-            key={step.title}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-          >
-            <StepCard step={step} index={index} />
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function ProcessSection() {
-  const isMobile = useIsMobile();
-
-  const renderStep = (step: Step, index: number) => (
-    <StepCard step={step} index={index} />
-  );
-
-  return (
-    <section className="py-16 md:py-24 bg-background">
+    <section ref={sectionRef} className="py-20 md:py-32 bg-background overflow-hidden">
       <div className="container px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-10 md:mb-16"
-        >
-          <span className="inline-block text-sm font-medium text-primary mb-3 md:mb-4 uppercase tracking-wider">
+        <AnimatedSection className="text-center mb-16">
+          <span className="inline-block text-sm font-medium text-primary mb-4 uppercase tracking-wider">
             Our Process
           </span>
-          <h2 className="text-2xl md:text-3xl lg:text-display-sm font-bold text-foreground mb-3 md:mb-4">
+          <h2 className="text-3xl md:text-display-sm font-bold text-foreground mb-4">
             How we work
           </h2>
-          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             A proven methodology that delivers results predictably.
           </p>
-        </motion.div>
+        </AnimatedSection>
 
-        {/* Mobile: Swipeable carousel */}
-        {isMobile && (
-          <MobileHorizontalCarousel
-            items={steps}
-            renderItem={renderStep}
-            progressColors="from-google-blue via-google-red via-google-yellow to-google-green"
+        <div className="relative max-w-4xl mx-auto">
+          {/* Connection line background */}
+          <div className="hidden md:block absolute top-16 left-[10%] right-[10%] h-0.5 bg-border" />
+          
+          {/* Animated progress line */}
+          <motion.div 
+            ref={progressRef}
+            className="hidden md:block absolute top-16 left-[10%] h-0.5 bg-gradient-to-r from-google-blue via-google-red via-google-yellow to-google-green"
+            style={{ 
+              width: useTransform(lineProgress, (value) => `${Math.min(value, 80)}%`),
+            }}
           />
-        )}
 
-        {/* Desktop: Scroll-linked progress */}
-        {!isMobile && <DesktopProcessSection />}
+          <div className="grid md:grid-cols-4 gap-8">
+            {steps.map((step, index) => {
+              const colors = colorClasses[step.color];
+              
+              // Calculate when this step should activate
+              const stepStart = 0.2 + (index * 0.15);
+              const stepEnd = stepStart + 0.15;
+              
+              return (
+                <motion.div
+                  key={step.title}
+                  className="relative text-center"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                >
+                  {/* Step number with icon */}
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    className={`relative inline-flex items-center justify-center w-16 h-16 rounded-full ${colors.bg} ${colors.text} mb-6 shadow-lg z-10`}
+                  >
+                    <step.icon className="w-7 h-7" />
+                    
+                    {/* Animated ring on scroll */}
+                    <motion.span 
+                      className={`absolute inset-0 rounded-full ${colors.bg} opacity-30`}
+                      style={{
+                        scale: useTransform(
+                          scrollYProgress, 
+                          [stepStart, stepEnd], 
+                          [1, 1.3]
+                        ),
+                        opacity: useTransform(
+                          scrollYProgress,
+                          [stepStart, stepEnd, stepEnd + 0.1],
+                          [0, 0.4, 0]
+                        ),
+                      }}
+                    />
+                    
+                    {/* Step number badge */}
+                    <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-card border-2 border-border text-xs font-bold text-foreground flex items-center justify-center">
+                      {index + 1}
+                    </span>
+                  </motion.div>
+
+                  <h3 className="text-lg font-bold text-foreground mb-2">
+                    {step.title}
+                  </h3>
+                  
+                  <p className="text-sm text-muted-foreground">
+                    {step.description}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );
