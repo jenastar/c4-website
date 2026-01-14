@@ -1,11 +1,16 @@
 import { motion } from "framer-motion";
 import { Linkedin, Twitter, Github } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const footerLinks = {
+  solutions: [
+    { name: "Services", href: "/services" },
+    { name: "AI Solutions", href: "/ai-solutions" },
+    { name: "Industries", href: "/industries" },
+  ],
   company: [
-    { name: "About", href: "#" },
-    { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ],
   legal: [
     { name: "Privacy Policy", href: "#" },
@@ -26,7 +31,7 @@ export function Footer() {
       <div className="container px-4">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-1">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -57,7 +62,7 @@ export function Footer() {
             </motion.div>
           </div>
 
-          {/* Company Links */}
+          {/* Solutions Links */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -65,16 +70,40 @@ export function Footer() {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
+              <h4 className="font-semibold mb-4">Solutions</h4>
+              <ul className="space-y-3">
+                {footerLinks.solutions.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.href}
+                      className="text-background/70 hover:text-background transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+
+          {/* Company Links */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 }}
+            >
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-3">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
+                    <Link
+                      to={link.href}
                       className="text-background/70 hover:text-background transition-colors"
                     >
                       {link.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

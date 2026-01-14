@@ -2,17 +2,20 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Calendar } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
-  { name: "Services", href: "#services" },
-  { name: "Process", href: "#process" },
-  { name: "About", href: "#about" },
-  { name: "Contact", href: "#contact" },
+  { name: "Services", href: "/services" },
+  { name: "AI Solutions", href: "/ai-solutions" },
+  { name: "Industries", href: "/industries" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
 ];
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +27,11 @@ export function Header() {
   }, []);
 
   const calendlyUrl = "https://calendly.com";
+
+  const isActive = (href: string) => {
+    if (href === "/") return location.pathname === "/";
+    return location.pathname.startsWith(href);
+  };
 
   return (
     <motion.header
@@ -39,21 +47,25 @@ export function Header() {
       <div className="container px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-1">
+          <Link to="/" className="flex items-center gap-1">
             <span className="text-2xl font-bold text-foreground">C</span>
             <span className="text-2xl font-bold text-google-blue">4</span>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                to={item.href}
+                className={`text-sm font-medium transition-colors ${
+                  isActive(item.href)
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -94,14 +106,18 @@ export function Header() {
             <div className="container px-4 py-4">
               <nav className="flex flex-col gap-4">
                 {navItems.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.href}
-                    className="text-base font-medium text-foreground py-2"
+                    to={item.href}
+                    className={`text-base font-medium py-2 ${
+                      isActive(item.href)
+                        ? "text-primary"
+                        : "text-foreground"
+                    }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
                 <Button asChild className="mt-2">
                   <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
