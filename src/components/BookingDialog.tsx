@@ -11,11 +11,13 @@ import { Calendar, ExternalLink } from "lucide-react";
 const BOOKING_OPTIONS = [
   {
     name: "Amdal",
-    url: "https://calendar.app.google/VzHQhzjUq5NbiPnM9",
+    platform: "Calendly",
+    url: "https://calendly.com/cortex4",
     color: "google-blue" as const,
   },
   {
     name: "Jena",
+    platform: "Google Calendar",
     url: "https://calendar.app.google/ig62qzDtfrFJdxg57",
     color: "google-green" as const,
   },
@@ -64,7 +66,7 @@ export function BookingDialog({ children }: { children: React.ReactNode }) {
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-foreground">{option.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    Google Calendar
+                    {option.platform}
                   </p>
                 </div>
                 <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
