@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Check } from 'lucide-react';
 import { getServiceBySlug } from '@/data/services';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function SecurityGovernancePage() {
   const service = getServiceBySlug('security-governance');
@@ -57,12 +58,12 @@ export default function SecurityGovernancePage() {
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" asChild>
-                <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
+              <BookingDialog>
+                <Button size="lg">
                   Schedule a call
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </a>
-              </Button>
+                </Button>
+              </BookingDialog>
               <Button size="lg" variant="outline" asChild>
                 <a href="/contact">Contact us</a>
               </Button>
@@ -283,12 +284,12 @@ export default function SecurityGovernancePage() {
             <p className="text-lg text-muted-foreground mb-8">
               Book a free 30-minute consultation to discuss your specific needs.
             </p>
-            <Button size="lg" asChild>
-              <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
+            <BookingDialog>
+              <Button size="lg">
                 Schedule a call
                 <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </Button>
+              </Button>
+            </BookingDialog>
           </motion.div>
         </div>
       </section>

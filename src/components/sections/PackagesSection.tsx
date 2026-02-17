@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { Check, ArrowRight } from "lucide-react";
+import { BookingDialog } from "@/components/BookingDialog";
 
 const packages = [
   {
@@ -67,7 +68,6 @@ const colorClasses: Record<string, { border: string; bg: string }> = {
 };
 
 export function PackagesSection() {
-  const calendlyUrl = "https://calendly.com";
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Sticky scroll setup
@@ -236,16 +236,15 @@ export function PackagesSection() {
                       ))}
                     </ul>
 
-                    <Button
-                      asChild
-                      className={`w-full group ${pkg.featured ? "" : "variant-outline"}`}
-                      variant={pkg.featured ? "default" : "outline"}
-                    >
-                      <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
+                    <BookingDialog>
+                      <Button
+                        className={`w-full group ${pkg.featured ? "" : "variant-outline"}`}
+                        variant={pkg.featured ? "default" : "outline"}
+                      >
                         Learn more
                         <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </a>
-                    </Button>
+                      </Button>
+                    </BookingDialog>
                   </motion.div>
                 );
               })}

@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { GeometricBackground } from "@/components/graphics/GeometricBackground";
 import { ArrowRight, Calendar } from "lucide-react";
 import { useRef } from "react";
+import { BookingDialog } from "@/components/BookingDialog";
 
 export function HeroSection() {
-  const calendlyUrl = "https://calendly.com"; // Replace with actual Calendly link
   const sectionRef = useRef<HTMLElement>(null);
   
   // Scroll-linked animations
@@ -75,17 +75,16 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Button
-              asChild
-              size="lg"
-              className="group text-base px-8 py-6 shadow-color hover:shadow-xl transition-all duration-300"
-            >
-              <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
+            <BookingDialog>
+              <Button
+                size="lg"
+                className="group text-base px-8 py-6 shadow-color hover:shadow-xl transition-all duration-300"
+              >
                 <Calendar className="w-5 h-5 mr-2" />
                 Book a 30-minute consult
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </Button>
+              </Button>
+            </BookingDialog>
             
             <Button
               variant="outline"

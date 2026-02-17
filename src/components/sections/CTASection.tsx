@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar } from "lucide-react";
+import { BookingDialog } from "@/components/BookingDialog";
 
 export function CTASection() {
-  const calendlyUrl = "https://calendly.com";
 
   return (
     <section className="relative py-20 md:py-32 overflow-hidden">
@@ -42,17 +42,16 @@ export function CTASection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                asChild
-                size="lg"
-                className="group bg-white text-primary hover:bg-white/90 text-base px-8 py-6 shadow-xl"
-              >
-                <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
+              <BookingDialog>
+                <Button
+                  size="lg"
+                  className="group bg-white text-primary hover:bg-white/90 text-base px-8 py-6 shadow-xl"
+                >
                   <Calendar className="w-5 h-5 mr-2" />
                   Book a 30-minute consult
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </a>
-              </Button>
+                </Button>
+              </BookingDialog>
               
               <Button
                 variant="outline"

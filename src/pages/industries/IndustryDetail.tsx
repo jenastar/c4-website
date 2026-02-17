@@ -7,6 +7,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Check, ArrowLeft, Shield } from 'lucide-react';
 import { getIndustryBySlug, industries } from '@/data/industries';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function IndustryDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -75,12 +76,12 @@ export default function IndustryDetail() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" asChild>
-                <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
+              <BookingDialog>
+                <Button size="lg">
                   Schedule a call
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </a>
-              </Button>
+                </Button>
+              </BookingDialog>
               <Button size="lg" variant="outline" asChild>
                 <a href="/contact">Contact us</a>
               </Button>
@@ -378,12 +379,12 @@ export default function IndustryDetail() {
             <p className="text-lg text-muted-foreground mb-8">
               Book a free 30-minute consultation to discuss your specific challenges and opportunities.
             </p>
-            <Button size="lg" asChild>
-              <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
+            <BookingDialog>
+              <Button size="lg">
                 Schedule a call
                 <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </Button>
+              </Button>
+            </BookingDialog>
           </motion.div>
         </div>
       </section>

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { services } from '@/data/services';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function ServicesPage() {
   return (
@@ -92,12 +93,12 @@ export default function ServicesPage() {
             <p className="text-lg text-muted-foreground mb-8">
               Book a free 30-minute consultation to discuss your needs.
             </p>
-            <Button size="lg" asChild>
-              <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
+            <BookingDialog>
+              <Button size="lg">
                 Schedule a call
                 <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </Button>
+              </Button>
+            </BookingDialog>
           </motion.div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Calendar } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { BookingDialog } from "@/components/BookingDialog";
 
 const navItems = [
   { name: "Services", href: "/services" },
@@ -25,8 +26,6 @@ export function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const calendlyUrl = "https://calendly.com";
 
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";
@@ -71,12 +70,12 @@ export function Header() {
 
           {/* CTA Button */}
           <div className="hidden md:flex items-center gap-4">
-            <Button asChild size="sm" className="group">
-              <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
+            <BookingDialog>
+              <Button size="sm" className="group">
                 <Calendar className="w-4 h-4 mr-2" />
                 Book a Call
-              </a>
-            </Button>
+              </Button>
+            </BookingDialog>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -119,12 +118,12 @@ export function Header() {
                     {item.name}
                   </Link>
                 ))}
-                <Button asChild className="mt-2">
-                  <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
+                <BookingDialog>
+                  <Button className="mt-2">
                     <Calendar className="w-4 h-4 mr-2" />
                     Book a Call
-                  </a>
-                </Button>
+                  </Button>
+                </BookingDialog>
               </nav>
             </div>
           </motion.div>

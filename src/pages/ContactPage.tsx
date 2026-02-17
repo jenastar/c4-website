@@ -4,6 +4,7 @@ import { SEO } from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Calendar, Mail, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function ContactPage() {
   return (
@@ -53,11 +54,9 @@ export default function ContactPage() {
               <p className="text-muted-foreground mb-6">
                 30-minute consultation to discuss your project
               </p>
-              <Button asChild className="w-full">
-                <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
-                  Schedule Now
-                </a>
-              </Button>
+              <BookingDialog>
+                <Button className="w-full">Schedule Now</Button>
+              </BookingDialog>
             </motion.div>
 
             <motion.div

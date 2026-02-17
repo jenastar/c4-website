@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Bot, Brain, Zap, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { aiSolutions, getAISolutionsByCategory } from '@/data/aiSolutions';
+import { BookingDialog } from '@/components/BookingDialog';
 
 const categoryIcons = {
   'Automation': Bot,
@@ -52,12 +53,12 @@ export default function AISolutionsPage() {
               From AI copilots to predictive analytics, we build and deploy AI systems that solve real business problems on Google Cloud.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" asChild>
-                <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
+              <BookingDialog>
+                <Button size="lg">
                   Schedule a consultation
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </a>
-              </Button>
+                </Button>
+              </BookingDialog>
               <Button size="lg" variant="outline" asChild>
                 <a href="/contact">Contact us</a>
               </Button>
@@ -158,12 +159,12 @@ export default function AISolutionsPage() {
             <p className="text-lg text-muted-foreground mb-8">
               Book a free consultation and we'll help you identify the right AI solutions for your business.
             </p>
-            <Button size="lg" asChild>
-              <a href="https://calendly.com" target="_blank" rel="noopener noreferrer">
+            <BookingDialog>
+              <Button size="lg">
                 Schedule a call
                 <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </Button>
+              </Button>
+            </BookingDialog>
           </motion.div>
         </div>
       </section>
