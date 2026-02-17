@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1a73e8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4285f4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34a853;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Grid pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)" />
+
+  <!-- Grid overlay -->
+  <rect width="1200" height="630" fill="url(#grid)" />
+
+  <!-- Decorative geometric shapes -->
+  <circle cx="1050" cy="100" r="150" fill="url(#accentGradient)" opacity="0.1" />
+  <circle cx="150" cy="530" r="120" fill="url(#accentGradient)" opacity="0.08" />
+
+  <!-- Accent bar at top -->
+  <rect x="0" y="0" width="1200" height="8" fill="url(#accentGradient)" />
+
+  <!-- Logo section -->
+  <g transform="translate(80, 80)">
+    <!-- C4 Logo with background -->
+    <rect x="0" y="0" width="120" height="120" rx="24" fill="url(#accentGradient)" />
+
+    <!-- C letter -->
+    <path d="M 30 60 C 30 45 45 30 60 30 C 68 30 74 33 78 38"
+          stroke="white"
+          stroke-width="8"
+          stroke-linecap="round"
+          fill="none" />
+    <path d="M 30 60 C 30 75 45 90 60 90 C 68 90 74 87 78 82"
+          stroke="white"
+          stroke-width="8"
+          stroke-linecap="round"
+          fill="none" />
+
+    <!-- 4 number -->
+    <path d="M 82 48 L 82 72 M 82 60 L 96 60 M 96 40 L 96 84"
+          stroke="white"
+          stroke-width="8"
+          stroke-linecap="round" />
+  </g>
+
+  <!-- Main heading -->
+  <text x="80" y="280" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="700" fill="white" letter-spacing="-1">
+    C4 Cloud Computing
+  </text>
+
+  <!-- Tagline -->
+  <text x="80" y="350" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="42" font-weight="400" fill="#94a3b8" letter-spacing="0">
+    Production-Ready AI &amp; Automation
+  </text>
+
+  <text x="80" y="410" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="42" font-weight="400" fill="#94a3b8" letter-spacing="0">
+    on Google Cloud
+  </text>
+
+  <!-- Feature badges -->
+  <g transform="translate(80, 460)">
+    <!-- Badge 1 -->
+    <rect x="0" y="0" width="200" height="50" rx="25" fill="rgba(255,255,255,0.1)" />
+    <text x="100" y="32" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="white" text-anchor="middle">
+      Services
+    </text>
+
+    <!-- Badge 2 -->
+    <rect x="220" y="0" width="220" height="50" rx="25" fill="rgba(255,255,255,0.1)" />
+    <text x="330" y="32" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="white" text-anchor="middle">
+      AI Solutions
+    </text>
+
+    <!-- Badge 3 -->
+    <rect x="460" y="0" width="200" height="50" rx="25" fill="rgba(255,255,255,0.1)" />
+    <text x="560" y="32" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="white" text-anchor="middle">
+      Industries
+    </text>
+  </g>
+
+  <!-- Bottom accent -->
+  <rect x="0" y="622" width="1200" height="8" fill="url(#accentGradient)" />
+</svg>
